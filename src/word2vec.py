@@ -10,7 +10,8 @@ hidden_vector_dict = {}
 word_vector_size = 30
 window = 3
 alpha = 0.01
-train_file_name = "./30000_lines.txt"
+train_file_name = "../data/3000_lines.txt"
+result_file_name ="../data/result_vector.txt" 
 hs = 0
 
 def read_train_data():
@@ -79,7 +80,7 @@ def train():
                 if total_count % 10000 == 0:
                     print "word_count:%d,line_count:%d" % (total_count,line_count)
     #write result
-    fw = open("result.txt","w")
+    fw = open(result_file_name,"w")
     fw.write(str(len(word_code_dict))+" "+str(word_vector_size)+"\n")  
     for k,v in word_code_dict.iteritems():
         fw.write(k)
@@ -90,9 +91,6 @@ def train():
 
 if __name__ == '__main__':
     train()
-    xall = np.random.randn(10)
-    w = np.random.randn(10)
-    print xall,w
 
 
 
