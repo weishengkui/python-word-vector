@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #coding:utf8
 from huffman import huffman 
 import numpy as np
