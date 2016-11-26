@@ -41,12 +41,10 @@ class huffman(object):
     def get_code(self):
         self.hidden_count = 0
         self.leaf_count = 0
-        self.huffman_code = []
-        
+        self.huffman_code = [] 
         self.travel(self.root)
         print "hidden_count:",self.hidden_count
-        print "leaf_count:",self.leaf_count
-        
+        print "leaf_count:",self.leaf_count        
         return self.huffman_code
 
     def travel(self,root):        
