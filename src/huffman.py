@@ -67,7 +67,7 @@ class huffman(object):
  
 
 if __name__ == '__main__':
-    temp = [("nihao",2),3,5,7]
+    temp = [("hello",2),3,5,7]
     print temp,len(temp)
     a = huffman(temp)
     code = a.get_code()
