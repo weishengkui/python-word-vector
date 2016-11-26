@@ -13,8 +13,10 @@
  3  ./demo_distance.sh 
  
  
-Acknowledges:
+Notes:
 
  1、The format converting tool in bin folder is provided by https://github.com/marekrei/convertvec.git
  
  2、Distance counting tool is just the original version of google C program 
+
+ 3、Please email me if you have any questions: www.7zai@163.com
