@@ -14,13 +14,13 @@ alpha = 0.01
 train_file_name = "../data/10000_lines.txt"
 result_file_name ="../data/result_vector.txt" 
 cbow = 0
-fix_layer_1 = False
 max_loop = 1
 min_count = 5
 all_lines = open(train_file_name).readlines()
+all_words_num = 0
 
 def read_train_data():
-    global word_code_dict,hidden_vector_dict
+    global word_code_dict,hidden_vector_dict,all_words_num
     for line in all_lines:
         data = line.strip().split()
         for item in data:
@@ -29,6 +29,8 @@ def read_train_data():
             else:
                 word_code_dict[item] += 1
     min_key_list = [k for k in word_code_dict if word_code_dict[k] < min_count]
+    all_words_num = sum(word_code_dict.itervalues())
+
     for key in min_key_list:
         del word_code_dict[key]
     #built_huffan_tree
@@ -46,6 +48,7 @@ def read_train_data():
 def train():
     global word_code_dict,hidden_vector_dict
     read_train_data()
+    print "Start training."
     for loop in range(max_loop):
         total_count = 0
         line_count = 0
@@ -58,8 +61,8 @@ def train():
             samples = []
             mywordIndex = window
             while mywordIndex + window <= len(data):
-                contexts = data[mywordIndex-window:mywordIndex] +\
-                         data[mywordIndex+1: mywordIndex+window+1]
+                contexts = data[mywordIndex - window:mywordIndex] +\
+                         data[mywordIndex + 1: mywordIndex+window + 1]
                 targets = [data[mywordIndex]]
                 targets = filter(lambda x : x in word_code_dict,targets)
                 contexts = filter(lambda x : x in word_code_dict,contexts)
@@ -83,15 +86,15 @@ def train():
                         w = hidden_vector_dict[huffman_key]
                         g = (1.0/(1+np.exp(np.dot(w,x_all)*y) ) ) * -y
                         x_all_g += g * w
-                        if loop != max_loop -1 or not fix_layer_1:
-                            w_g = g * x_all
-                            hidden_vector_dict[huffman_key] -= alpha * w_g
+                        w_g = g * x_all
+                        hidden_vector_dict[huffman_key] -= alpha * w_g
                 for x in contexts:
                     word_code_dict[x][1] -= alpha * x_all_g / len(targets)
                 
                 total_count += 1
-                if total_count % 500 == 0:
-                    print "loop:%d,word_count:%d,line_count:%d/%d" % (loop,total_count,line_count,len(all_lines))
+                if total_count % 2000 == 0:
+                    rate = 100 * float (total_count) / all_words_num
+                    print "loop:%d:progress:%.3f%%,line_count:%d/%d" % (loop,rate ,line_count,len(all_lines))
                     sys.stdout.flush()
     #write result
     fw = open(result_file_name,"w")
