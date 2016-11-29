@@ -33,7 +33,7 @@ def read_train_data():
 
     for key in min_key_list:
         del word_code_dict[key]
-    #built_huffan_tree
+    #building_huffman_tree
     myhuffman = huffman(word_code_dict.items())
     word_code_dict = dict(myhuffman.get_code())
     for k,v in word_code_dict.iteritems():
