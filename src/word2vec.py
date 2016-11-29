@@ -74,6 +74,8 @@ def train():
                     contexts,targets = targets,contexts
                 samples.append([contexts,targets])
                 mywordIndex += 1
+
+            #SGD
             for contexts,targets in samples:
                 x_all = np.sum(word_code_dict[x][1] for x in contexts)
                 x_all_g = np.zeros(word_vector_size)
