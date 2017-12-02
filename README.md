@@ -14,6 +14,20 @@ To start,try this steps:
     2.   sh demo_word2vec.sh (it takes about 20minutes to train)
  
     3.   sh demo_distance.sh 
+         
+         This is an example:
+         
+         Enter word or sentence (EXIT to break): 市场
+
+         Word: 市场  Position in vocabulary: 17352
+
+                                            Word       Cosine distance
+         ------------------------------------------------------------------------
+                                            需求		0.934767
+                                            优化		0.921795
+                                            竞争		0.918057
+                                            资源		0.904784
+ 
  
  
 Notes:
