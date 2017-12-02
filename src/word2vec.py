@@ -45,59 +45,62 @@ def read_train_data():
         word_vector = np.random.randn(word_vector_size)
         word_code_dict[k] = [v,word_vector]
 
+def generate_samples(all_lines):
+    samples = []
+    for line in all_lines:
+        data = line.strip().split() 
+        if len(data) < window *2 + 1:
+            continue
+        #generate samples by window
+        mywordIndex = window
+        while mywordIndex + window <= len(data):
+            contexts = data[mywordIndex - window:mywordIndex] +\
+                     data[mywordIndex + 1: mywordIndex+window + 1]
+            targets = [data[mywordIndex]]
+            targets = filter(lambda x : x in word_code_dict,targets)
+            contexts = filter(lambda x : x in word_code_dict,contexts)
+            if not targets or not contexts:
+                mywordIndex += 1
+                continue
+            #skip-gram
+            if cbow != 1:
+                contexts,targets = targets,contexts
+            samples.append([contexts,targets])
+            mywordIndex += 1
+    return samples
+
+
 def train():
     global word_code_dict,hidden_vector_dict
     read_train_data()
+    samples = generate_samples(all_lines)
+    x_all_g = np.zeros(word_vector_size)
     print "Start training."
     for loop in range(max_loop):
-        total_count = 0
-        line_count = 0
-        for line in all_lines:
-            line_count += 1
-            data = line.strip().split() 
-            if len(data) < window *2 + 1:
-                continue
-            #generate samples by window
-            samples = []
-            mywordIndex = window
-            while mywordIndex + window <= len(data):
-                contexts = data[mywordIndex - window:mywordIndex] +\
-                         data[mywordIndex + 1: mywordIndex+window + 1]
-                targets = [data[mywordIndex]]
-                targets = filter(lambda x : x in word_code_dict,targets)
-                contexts = filter(lambda x : x in word_code_dict,contexts)
-                if not targets or not contexts:
-                    mywordIndex += 1
-                    continue
-                #skip-gram
-                if cbow != 1:
-                    contexts,targets = targets,contexts
-                samples.append([contexts,targets])
-                mywordIndex += 1
-
-            #SGD
-            for contexts,targets in samples:
-                x_all = np.sum(word_code_dict[x][1] for x in contexts)
-                x_all_g = np.zeros(word_vector_size)
-                for target in targets: 
-                    huffman_code = word_code_dict[target][0]
-                    #training from top to down
-                    for i,v in enumerate(huffman_code):
-                        huffman_key = huffman_code[:i] + "x"
-                        y = 1 if v != '0' else -1
-                        w = hidden_vector_dict[huffman_key]
-                        g = (1.0/(1+np.exp(np.dot(w,x_all)*y) ) ) * -y
-                        x_all_g += g * w
-                        w_g = g * x_all
-                        hidden_vector_dict[huffman_key] -= alpha * w_g
-                for x in contexts:
-                    word_code_dict[x][1] -= alpha * x_all_g / len(targets)
-                
-                total_count += 1
-                if total_count % 2000 == 0:
-                    rate = 100 * float (total_count) / all_words_num
-                    print "loop:%d:progress:%.3f%%,line_count:%d/%d" % (loop,rate ,line_count,len(all_lines))
-                    sys.stdout.flush()
+        #SGD
+        count = 0
+        for contexts,targets in samples:
+            rate  = 1./len(contexts)
+            x_all = rate * np.sum(word_code_dict[x][1] for x in contexts)
+            x_all_g = x_all_g * 0 #reset zero
+            for target in targets: 
+                huffman_code = word_code_dict[target][0]
+                #training from top to down
+                for i,v in enumerate(huffman_code):
+                    huffman_key = huffman_code[:i] + "x"
+                    y = 1 if v != '0' else -1
+                    w = hidden_vector_dict[huffman_key]
+                    g = (1.0/(1+np.exp(np.dot(w,x_all)*y) ) ) * -y
+                    x_all_g += g * w
+                    w_g = g * x_all
+                    hidden_vector_dict[huffman_key] -= alpha * w_g
+            for x in contexts:
+                word_code_dict[x][1] -= alpha * x_all_g * rate
+            
+            count += 1
+            if count % 2000 == 0:
+                print("training {0} sample of {1} in {2}th out of {3} loops".format(count,len(samples),loop,max_loop))
+                sys.stdout.flush()
     #write result
     fw = open(result_file_name,"w")
     fw.write(str(len(word_code_dict))+" "+str(word_vector_size)+"\n")  
