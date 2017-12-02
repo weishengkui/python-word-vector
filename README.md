@@ -14,6 +14,22 @@ To start,try this steps:
     2.   sh demo_word2vec.sh (it takes about 20minutes to train)
  
     3.   sh demo_distance.sh 
+         
+         This is an example:
+         
+         Enter word or sentence (EXIT to break): 国内
+
+         Word: 国内  Position in vocabulary: 37753
+
+                                            Word       Cosine distance
+         ------------------------------------------------------------------------
+                                            市场		0.975123
+                                            行业		0.954094
+                                            企业		0.948457
+                                            国际		0.944816
+
+
+ 
  
  
 Notes:
