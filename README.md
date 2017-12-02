@@ -17,18 +17,16 @@ To start,try this steps:
          
          This is an example:
          
-         Enter word or sentence (EXIT to break): 国内
+         Enter word or sentence (EXIT to break): 市场
 
-         Word: 国内  Position in vocabulary: 37753
+         Word: 市场  Position in vocabulary: 17352
 
                                             Word       Cosine distance
          ------------------------------------------------------------------------
-                                            市场		0.975123
-                                            行业		0.954094
-                                            企业		0.948457
-                                            国际		0.944816
-
-
+                                            需求		0.934767
+                                            优化		0.921795
+                                            竞争		0.918057
+                                            资源		0.904784
  
  
  
